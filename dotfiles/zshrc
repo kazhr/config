@@ -140,7 +140,7 @@ add-zsh-hook chpwd ls_abbrev
 
 # fzf
 if [ -f $HOME/.fzf.zsh ]; then
-  export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
+  export FZF_DEFAULT_OPTS='--height 40% --reverse'
   . $HOME/.fzf.zsh
 fi
 
