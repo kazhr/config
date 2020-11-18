@@ -162,10 +162,13 @@ function setup_nvim() {
     mkdir -p ~/.config/nvim
   fi
   ln -sf $REPO_DIR/nvim/init.vim ~/.config/nvim/init.vim
+  ln -sf $REPO_DIR/nvim/dein.vim ~/.config/nvim/dein.vim
+  ln -sf $REPO_DIR/nvim/dein.toml ~/.config/nvim/dein.toml
+  ln -sf $REPO_DIR/nvim/python.toml ~/.config/nvim/python.toml
 
   install_conda
   export PYENV_VERSION='miniconda3-latest'
-  echo "let g:python3_host_prog = $(pyenv which python)" > ~/.config/nvim/python.vim
+  echo "let g:python3_host_prog = '$(pyenv which python)'" > ~/.config/nvim/python.vim
 
   for pkg in neovim flake8; do
     if ! python -c "import $pkg" &>/dev/null; then
@@ -174,7 +177,7 @@ function setup_nvim() {
   done
 
   export PYENV_VERSION='miniconda2-latest'
-  echo "let g:python_host_prog = $(pyenv which python)" >> ~/.config/nvim/python.vim
+  echo "let g:python_host_prog = '$(pyenv which python)'" >> ~/.config/nvim/python.vim
 
   for pkg in neovim; do
     if ! python -c "import $pkg" &>/dev/null; then
