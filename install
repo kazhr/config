@@ -1,0 +1,191 @@
+#!/bin/bash
+set -eu
+set -x
+
+# environment
+REPO_DIR=$(cd $(dirname $0); pwd)
+PYENV_ROOT=~/.pyenv
+
+export PYENV_ROOT
+export PATH=$PATH:$PYENV_ROOT/bin
+
+# local functions
+function _exists() {
+  # check if a command _exists
+  # input:
+  #   cmd
+  type $1 &>/dev/null
+}
+
+function _require() {
+  # return 1 if a commnad does not exist
+  # input:
+  #   cmd1 [cmd2...]
+  local cmd
+  for cmd in $*; do
+    if ! _exists $cmd; then
+      echo "E: not found $cmd!" >&2
+      return 1
+    fi
+  done
+}
+
+function _ask() {
+  # _ask a question and read answer from stdin
+  # input:
+  #   question
+  # output:
+  #   yes ? 0 : 1
+  local answer
+  read -p "$1 [y/N]" answer
+  case $answer in
+    [yY]*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+# main functions
+function install_pyenv() {
+
+  # skip if already _exists
+  _exists pyenv && return 0
+
+  # skip if no
+  _ask "Do you want to install pyenv?" || return 0
+
+  case $OSTYPE in
+    darwin*)
+      _require brew
+      brew install pyenv
+      ln -sf /usr/local/opt/pyenv $PYENV_ROOT
+      ;;
+
+    linux*)
+      _require curl
+      (cd && curl https://pyenv.run | bash)
+      ;;
+
+    *)
+      echo "E: unknown OSTYPE($OSTYPE)!" >&2
+      return 1
+      ;;
+  esac
+}
+
+function install_conda() {
+
+  _require pyenv
+  eval "$(pyenv init -)"
+
+  conda3='miniconda3-latest'
+  if [ ! -d $PYENV_ROOT/versions/$conda3 ]; then
+    pyenv install $conda3
+  fi
+
+  conda2='miniconda2-latest'
+  if [ ! -d $PYENV_ROOT/versions/$conda2 ]; then
+    pyenv install $conda2
+  fi
+}
+
+function install_fzf() {
+
+  # skip if already _exists
+  [ -d ~/.fzf ] && return 0
+
+  # skip if no
+  _ask "Do you want to install fzf?" || return 0
+
+  case $OSTYPE in
+    darwin*)
+      _require brew
+      brew install fzf
+      ;;
+
+    linux*)
+      _require git
+      git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+      printf "y\ny\nn\n"| ~/.fzf/install
+      ;;
+
+    *)
+      echo "E: unknown OSTYPE($OSTYPE)!" >&2
+      return 1
+      ;;
+  esac
+}
+
+function setup_dotfiles() {
+
+  ln -sf $REPO_DIR/dotfiles/environment ~/.bash_profile
+  ln -sf $REPO_DIR/dotfiles/bashrc ~/.bashrc
+  ln -sf $REPO_DIR/dotfiles/aliases ~/.aliases
+
+  if [ ! -d $HOME/.nord-dircolors ]; then
+    _require git
+    git clone https://github.com/arcticicestudio/nord-dircolors.git $HOME/.nord-dircolors
+  fi
+  ln -sf $HOME/.nord-dircolors/src/dir_colors $HOME/.dir_colors
+
+  if _exists zsh; then
+    ln -sf $REPO_DIR/dotfiles/environment ~/.zshenv
+    ln -sf $REPO_DIR/dotfiles/zshrc       ~/.zshrc
+  fi
+
+  if _exists vim; then
+    ln -sf $REPO_DIR/vim/vimrc           ~/.vimrc
+  fi
+}
+
+function setup_zsh() {
+  _require zsh git curl
+
+  if [ ! -d $HOME/.enhancd ]; then
+    git clone https://github.com/b4b4r07/enhancd $HOME/.enhancd
+  fi
+
+  if [ ! -f $HOME/.csa.zsh ]; then
+    curl https://raw.githubusercontent.com/uasi/zsh-context-sensitive-alias/master/csa.zsh -o $HOME/.csa.zsh
+  fi
+}
+
+function setup_nvim() {
+
+  # skip if not _exists
+  _exists nvim || return 0
+
+  if [ ! -d ~/.config/nvim ]; then
+    mkdir -p ~/.config/nvim
+  fi
+  ln -sf $REPO_DIR/nvim/init.vim ~/.config/nvim/init.vim
+
+  install_conda
+  export PYENV_VERSION='miniconda3-latest'
+  echo "let g:python3_host_prog = $(pyenv which python)" > ~/.config/nvim/python.vim
+
+  for pkg in neovim flake8; do
+    if ! python -c "import $pkg" &>/dev/null; then
+      pip install $pkg
+    fi
+  done
+
+  export PYENV_VERSION='miniconda2-latest'
+  echo "let g:python_host_prog = $(pyenv which python)" >> ~/.config/nvim/python.vim
+
+  for pkg in neovim; do
+    if ! python -c "import $pkg" &>/dev/null; then
+      pip install $pkg
+    fi
+  done
+}
+
+install_pyenv
+install_conda
+install_fzf
+setup_dotfiles
+setup_zsh
+setup_nvim

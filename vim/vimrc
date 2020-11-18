@@ -1,0 +1,32 @@
+"ステータスラインを下から２行目に表示
+set statusline=%t\%=[%{&ff}]\[%{&fileencoding}]\[%l/%L]
+set laststatus=2
+
+"backupファイルをつくらない
+set nobackup
+
+"スクロール時に最低下5行は表示
+set scrolloff=5
+
+"行番号表示
+set number
+
+"改行時に前のインデントを継続する
+set autoindent
+
+" インデントは空白2つ
+set expandtab
+set tabstop=2
+set shiftwidth=2
+
+"ハイライトをonに、escキー2回押しで検索のハイライトoffに
+set hlsearch
+nmap <esc><esc> :noh<cr>
+
+"カーソルの位置を最後にカーソルがあった位置まで移動    
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") |    
+                 \   exe "normal! g`\"" |    
+                 \ endif    
+
+filetype plugin indent on
+syntax on

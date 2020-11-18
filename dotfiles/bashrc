@@ -1,0 +1,36 @@
+# .bashrc
+
+# include files
+[ -s ~/.aliases ] && . ~/.aliases
+
+# bash専用
+cdls ()
+{
+  \cd "$@" && ls
+}
+alias cd="cdls"
+
+# history
+export HISTCONTROL=ignoredups
+export HISTIGNORE="fg*:bg*:history*:cd*"
+export HISTSIZE=100000
+# incremental search
+[ -f ~/.fzf.bash ] && . ~/.fzf.bash
+
+# disable screen lock
+if [[ -t 0 ]]; then
+  stty stop undef
+  stty start undef
+fi
+
+# prompt
+rst='\[\033[0m\]'
+red='\[\033[1;31m\]'
+ylw='\[\033[1;33m\]'
+cyn='\[\033[1;36m\]'
+
+if [ $UID -eq 0 ]; then
+  PS1="[@$red\h$rst:$cyn\w$rst]\n  \\$ "
+else
+  PS1="[@$ylw\h$rst:$cyn\w$rst]\n  \\$ "
+fi

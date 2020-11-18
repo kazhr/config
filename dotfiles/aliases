@@ -1,0 +1,19 @@
+# デフォルト上書き
+alias ls='ls --color=auto'
+alias l='ls -CF'
+alias ll='ls -AlFh'
+alias la='ls -A'
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+# -i: 上書き確認
+
+alias grep="grep --color=auto"
+
+if type nvim &>/dev/null; then
+  alias vi="nvim"
+
+ elif type vim &>/dev/null; then
+  alias vi="vim"
+fi

@@ -1,0 +1,272 @@
+# --
+# 基本設定
+# --
+bindkey -e
+# Emacs ライクな操作(Vi ライクは -v)
+
+bindkey '^J' self-insert
+# C-j で改行
+
+autoload -Uz compinit; compinit -C
+# 補完機能の強化(-C: セキュリティチェックをパス)
+
+autoload -Uz colors; colors
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# lsの色と一致させる
+
+zstyle ':completion:*:default' menu select=1
+# <Tab>で候補から選択
+
+zstyle ':completion:*:*files' ignored-patterns '*?.o'
+# 中間ファイルは補完しない
+
+zstyle ':completion:*' use-cache true
+# キャッシュを使用
+
+setopt noautoremoveslash
+# 末尾から自動的に/を除かない
+
+setopt auto_param_slash
+# 末尾に自動的に/を追加
+
+setopt auto_param_keys
+# カッコを自動補完
+
+setopt magic_equal_subst
+# --prefix=以降でも補完
+
+setopt list_packed
+# 詰めて表示
+
+setopt numeric_glob_sort
+# 辞書順ではなく数値順でソート
+
+setopt correct
+# スペルミス訂正
+
+setopt auto_cd
+# ディレクトリ名だけでcd
+
+setopt ignore_eof
+# ^Dでログアウトしない
+
+setopt nobeep
+setopt nolistbeep
+# ビープ音なし
+
+# --
+# history
+# --
+HISTFILE=~/.zsh_history
+
+HISTORY_IGNORE="(ls|cd|pwd|exit)"
+# 保存しないコマンド
+
+HISTSIZE=10000
+# メモリに保存する履歴件数
+
+SAVEHIST=1000000
+# ファイルに保存する履歴件数
+
+setopt hist_ignore_all_dups
+# 重複を記入しない
+
+setopt share_history
+# 同ホストで履歴を共有
+
+setopt hist_verify
+# ヒストリを呼び出して編集
+
+setopt hist_no_store
+# historyコマンドは履歴に残さない
+
+setopt hist_ignore_space
+# スペースで始まったら履歴に残さない
+
+setopt no_flow_control
+# C-sで前方検索するためにシェルのフロー制御をoff
+
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+# デリミタから/を削除(Ctrl-W でカーソル前の1単語を削除したとき'/'で削除が止まる)
+
+# --
+# functions
+# --
+# ファイル数が多い時には省略表示
+# (参考: https://qiita.com/yuyuchu3333/items/b10542db482c3ac8b059)
+ls_abbrev() {
+  if [[ ! -r $PWD ]]; then
+    return
+  fi
+  # -C : Force multi-column output.
+  local cmd_ls='ls'
+  local -a opt_ls
+  opt_ls=('-C' '--color=always')
+  case ${OSTYPE} in
+    freebsd*|darwin*)
+      if (( $+commands[gls] )); then
+        cmd_ls='gls'
+      else
+        # -G : Enable colorized output.
+        opt_ls=('-aCFG')
+      fi
+      ;;
+  esac
+
+  local ls_result
+  ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]}| sed $'/^\e\[[0-9;]*m$/d')
+
+  local ls_lines=$(echo "$ls_result"| wc -l| tr -d ' ')
+  if [[ ls_lines -gt 10 ]]; then
+    echo "$ls_result"| head -n 5
+    echo '...'
+    echo "$ls_result"| tail -n 5
+    echo "$(command ls -1 -A| wc -l| tr -d ' ') files exist"
+  else
+    echo "$ls_result"
+  fi
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook chpwd ls_abbrev
+# chpwd(カレントディレクトリが変更したとき)にls_abbrevを実行
+
+# --
+# plugins
+# --
+# pyenv
+(( $+commands[pyenv] )) \
+  && eval "$(pyenv init -)" \
+  && eval "$(pyenv virtualenv-init -)"
+
+# fzf
+if [ -f $HOME/.fzf.zsh ]; then
+  export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
+  . $HOME/.fzf.zsh
+fi
+
+# enhanced
+if [ -d $HOME/.enhancd ]; then
+  export ENHANCD_DISABLE_HOME=1
+  export ENHANCD_HYPHEN_NUM=40
+  . $HOME/.enhancd/init.sh
+fi
+
+[ -f $HOME/.aliases ] && . $HOME/.aliases
+[ -f $HOME/.dir_colors ] && eval $(dircolors -b $HOME/.dir_colors)
+
+
+# --
+# prompt
+# --
+autoload -Uz is-at-least
+# zshのversionに依存した設定を書く
+
+if is-at-least 4.3.10; then
+  autoload -Uz vcs_info
+  # バージョン管理システムの情報を取得
+
+  zstyle ':vcs_info:*' enable git
+  # git用フォーマット
+
+  zstyle ':vcs_info:git:*' check-for-changes true
+  # コミットされてないファイルがあると%cか%uに文字列が格納される
+
+  zstyle ':vcs_info:git:*' stagedstr "%F{yellow}+"
+  # %c(コミットされてない)に格納する文字
+
+  zstyle ':vcs_info:git:*' unstagedstr "%F{red}!" 
+  # %u(addされてない)に格納する文字
+
+  zstyle ':vcs_info:git:*' formats "%c%u%f" "[%b]"
+  zstyle ':vcs_info:git:*' actionformats "%F{red}m%f" "[%b](%a)"
+  # vcs_info_msg_0_に%c%u, vcs_info_mas_1_に%b(ブランチ名)を格納
+
+  add-zsh-hook precmd vcs_info
+  # precmd(プロンプトが表示される毎)に実行
+fi
+
+# -- Login information
+# %M: ホスト名(フル)
+# %m: ホスト名
+# %n: ユーザー名
+# -- Shell state
+# %#: ユーザー種別
+# $?: 戻り値
+# %d: 作業ディレクトリ
+# %~: 作業ディレクトリ($HOME以下は~を使って省略)
+# %L: $SHLVLの値
+# -- Date and time
+# %D: yy-mm-dd
+# %T: 24-hour
+# %r: 12-hour, am/pm
+# %*: 24:hour, seconds
+# %w: day-dd
+# %W: mm/dd/yy
+# -- Conditional Substitution
+# %(x.true-text.false-text)
+# -- setting
+# %{ と %} で囲む (shellに文字数をカウントさせない)
+# -- 色をつける
+# 文字の色: %Fと%fで囲む
+# 背景の色: %Kと%kで囲む
+# -- 256 color を使う
+# 文字の色: \e[38;5${詳細前景色コード}m と \e[m で囲む
+# 背景の色: \e[48;5${詳細前景色コード}m と \e[m で囲む
+
+setopt prompt_subst
+# 変数展開を行う
+#
+if [[ UID -eq 0 ]]; then
+  PROMPT=$'[@%{\e[38;5;160m%}%m%{\e[m%}:%{\e[38;5;81m%}%~%{\e[m%}]
+  %(?.%#.%F{red}%#%f) '
+else
+  PROMPT=$'[@%{\e[38;5;226m%}%m%{\e[m%}:%{\e[38;5;81m%}%~%{\e[m%}]${vcs_info_msg_1_}
+  ${vcs_info_msg_0_}%(?.%#.%{${fg[red]}%}%#%{${reset_color}%}) '
+fi
+RPROMPT=$'%{\e[38;5;48m%}%T(%w)%{\e[m%}'
+
+# --
+# git用のalias
+# (https://github.com/uasi/zsh-context-sensitive-alias)
+# --
+if is-at-least 4.3.10 && [ -f $HOME/.csa.zsh ]; then
+  . $HOME/.csa.zsh
+  csa_init
+  # 初期化
+  # (これ以降通常のaliasコマンド使用不可)
+
+  # エイリアスを定義する
+  # csalias <ctx> <alias> <cmd>
+  #     ctx  : コンテキストを表す任意の文字列
+  #     alias: エイリアス名
+  #     cmd  : エイリアスに割り当てるコマンド
+  csalias ctx_git st       'git status -s'
+  csalias ctx_git fetch    'git fetch'
+  csalias ctx_git merge    'git merge'
+  csalias ctx_git pull     'git pull'
+  csalias ctx_git add      'git add'
+  csalias ctx_git cm       'git commit'
+  csalias ctx_git ca       'git commit -a -m "[update]"'
+  csalias ctx_git push     'git push'
+  csalias ctx_git checkout 'git checkout'
+  csalias ctx_git diff     'git diff'
+  csalias ctx_git log      'git log -n 15 --oneline --graph --decorate'
+  csalias ctx_git tree     'git log -n 15 --graph --all --format="%x09%x09%h %d %s"'
+  # %x09: ダブ区切り
+  # %an : 修正した人
+  # %h  : コミットID
+  # %d  : HEADとブランチの表示
+  # %s  : コミットメッセージ
+
+  # ディレクトリを移動したときコンテキストが設定されるようにする
+  check_repo() {
+    local -a ctx
+    if [[ -n $(git rev-parse --is-inside-work-tree 2>/dev/null) ]]; then
+        ctx+=ctx_git
+    fi
+    csa_set_context $ctx
+    # ctx: コンテキストを表す任意の文字列
+  }
+  add-zsh-hook chpwd check_repo
+  # chpwd(カレントディレクトリが変更したとき)にcheck_repoを実行
+fi
