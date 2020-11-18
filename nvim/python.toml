@@ -1,0 +1,91 @@
+# インデントをハイライト
+[[plugins]]
+repo = "nathanaelkane/vim-indent-guides"
+on_ft = 'python'
+hook_add = '''
+  " 起動時に有効
+  let g:indent_guides_enable_on_vim_startup = 1
+
+  " 色をつける幅(0ならshiftwidthと同じ値)
+  let g:indent_guides_guide_size = 1
+
+  " 0なら以下で色を指定
+  let g:indent_guides_auto_colors = 0
+
+  " 色指定
+  augroup my_group
+    au VimEnter,Colorscheme * hi IndentGuidesEven ctermbg=242
+    au VimEnter,Colorscheme * hi IndentGuidesOdd  ctermbg=239
+  augroup END
+'''
+
+# ALE
+[[plugins]]
+repo = 'w0rp/ale'
+on_ft = 'python'
+hook_add = '''
+
+  " 有効にするlinter
+  let g:ale_linters = {
+        \ 'python': ['flake8'],
+      \ }
+
+  " 固定パス
+  let g:ale_python_flake8_executable = g:python3_host_prog
+
+  " オプション + 無視する規約
+  let g:ale_python_flake8_options = '-m flake8 --ignore=E226,E501'
+
+  " 左端のカラムを表示したままにしない
+  let g:ale_sign_column_always = 0
+
+  " ファイルを開いたときにlint実行
+  let g:ale_lint_on_enter = 1
+
+  " ファイルを保存したときにlint実行
+  let g:ale_lint_on_save = 1
+
+  " 編集中はチェックしない
+  let g:ale_lint_on_text_changed = 0
+'''
+
+# 自動でpep8に準じてインデント
+[[plugins]]
+repo = 'hynek/vim-python-pep8-indent'
+on_ft = 'python'
+
+# 自動補完
+[[plugins]]
+repo = 'davidhalter/jedi-vim'
+on_ft = 'python'
+hook_add = '''
+  " Ctrl + N で候補を表示
+  let g:jedi#completions_command = "<C-N>"
+
+  " .を打つだけで候補を表示しない
+  let g:jedi#popup_on_dot = 0
+
+  " 関数の引数を表示
+  let g:jedi#show_call_signatures = 1
+
+  " 引数を表示するまでの時間(ms)
+  let g:jedi#show_call_signatures_delay = 100
+
+  " 補完機能を有効化
+  let g:jedi#smart_auto_mappings = 1
+
+  " 別windowでhelpを表示しない
+  augroup my_group
+    au FileType python setlocal completeopt-=preview
+  augroup END
+'''
+
+# =の前後に自動でスペースをいれる。またキーを押す回数で入力が変わる。
+[[plugins]]
+repo = "kana/vim-smartchr.git"
+on_ft = 'python'
+hook_add = '''
+  augroup my_group
+    au FileType python inoremap <expr> = smartchr#loop(' = ', ' == ', '=')
+  augroup END
+'''

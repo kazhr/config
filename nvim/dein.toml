@@ -1,0 +1,101 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'Shougo/vimproc.vim'
+hook_post_update = '''
+  let g:dein#plugin.build = 'make'
+'''
+
+# 下部にステータスラインを表示
+[[plugins]]
+repo = 'itchyny/lightline.vim'
+hook_add = '''
+  let g:lightline = {
+      \   'colorscheme': 'wombat',
+      \ }
+'''
+
+# colorscheme
+[[plugins]]
+repo = 'w0ng/vim-hybrid'
+hook_add = '''
+  set background=dark
+  let g:hybrid_custom_term_colors = 1
+
+  augroup my_group
+    au VimEnter * nested colorscheme hybrid
+  augroup END
+'''
+
+# 一括コメントアウト
+[[plugins]]
+repo = 'tpope/vim-commentary'
+
+# ftを判定する
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
+on_ft = 'toml'
+
+# ftに合わせてcolorを切り替える
+[[plugins]]
+repo = 'osyo-manga/vim-precious'
+depends = 'context_filetype.vim'
+on_ft = 'toml'
+
+# toml syntax
+[[plugins]]
+repo = 'cespare/vim-toml'
+on_ft = 'toml'
+
+# 行末のスペースをハイライト
+[[plugins]]
+repo = 'bronson/vim-trailing-whitespace'
+
+# 仮想ターミナル
+[[plugins]]
+repo = 'kassio/neoterm'
+hook_add = '''
+  let g:neoterm_repl_python = 0
+  let g:neoterm_autoinsert  = 1
+  " opens in insert mode
+  let g:neoterm_default_mod = "botright"
+'''
+
+# 自動保存
+[[plugins]]
+repo = 'vim-scripts/vim-auto-save'
+hook_add = '''
+  " enalbe AutoSave
+  let g:auto_save = 1
+
+  " do not change the 'updatetime' option
+  let g:auto_save_no_updatetime = 1
+
+  " do not save while in insert mode
+  let g:auto_save_in_insert_mode = 0
+
+  " do not display the auto-sve notification
+  let g:auto_save_silent = 1
+'''
+
+# スクリプトをその場で実行
+[[plugins]]
+repo = 'thinca/vim-quickrun'
+hook_add = '''
+  " 一番下にウィンドウを分割させて実行結果を出力, 出力がなければ自動的に閉じる
+  let g:quickrun_config = {
+      \ '_': {
+          \ 'runner': 'vimproc',
+          \ 'runner/vimproc/updatetime': 40,
+          \ 'outputter': 'error',
+          \ 'outputter/error/success': 'quickfix',
+          \ 'outputter/error/error'  : 'quickfix',
+          \ 'outputter/buffer/split' : ':botright 8sp',
+          \ 'outputter/buffer/close_on_empty': 1,
+        \ }
+      \ }
+
+  nmap ,r :QuickRun -mode n<CR>
+  vmap ,r :QuickRun -mode v<CR>
+'''
