@@ -136,7 +136,7 @@ function setup_dotfiles() {
   fi
 
   if _exists vim; then
-    ln -sf $REPO_DIR/vim/vimrc           ~/.vimrc
+    ln -sf $REPO_DIR/dotfiles/vimrc       ~/.vimrc
   fi
 }
 
