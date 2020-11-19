@@ -1,6 +1,5 @@
 #!/bin/bash
 set -eu
-set -x
 
 # environment
 REPO_DIR=$(cd $(dirname $0); pwd)
@@ -11,7 +10,7 @@ export PATH=$PATH:$PYENV_ROOT/bin
 
 # local functions
 function _exists() {
-  # check if a command _exists
+  # check if a command exists
   # input:
   #   cmd
   type $1 &>/dev/null
@@ -31,7 +30,7 @@ function _require() {
 }
 
 function _ask() {
-  # _ask a question and read answer from stdin
+  # ask a question and read answer from stdin
   # input:
   #   question
   # output:
@@ -51,7 +50,7 @@ function _ask() {
 # main functions
 function install_pyenv() {
 
-  # skip if already _exists
+  # skip if already exists
   _exists pyenv && return 0
 
   # skip if no
@@ -94,7 +93,7 @@ function install_conda() {
 
 function install_fzf() {
 
-  # skip if already _exists
+  # skip if already exists
   [ -d ~/.fzf ] && return 0
 
   # skip if no
@@ -155,7 +154,7 @@ function setup_zsh() {
 
 function setup_nvim() {
 
-  # skip if not _exists
+  # skip if not exists
   _exists nvim || return 0
 
   if [ ! -d ~/.config/nvim ]; then
