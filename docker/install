@@ -1,0 +1,59 @@
+#!/bin/bash
+set -eu
+
+function _exists() {
+  type $1 &>/dev/null
+}
+
+function _require() {
+  local cmd
+  for cmd in $*; do
+    if ! _exists $cmd; then
+      echo "E: not found $cmd!" >&2
+      return 1
+    fi
+  done
+}
+
+function install_docker() {
+
+  _exists docker && return 0
+
+  # for debian/ubuntu distribution
+  _require lsb_release
+
+  local distribution
+  case $(lsb_release -sd) in
+    Ubuntu*)
+      distribution=ubuntu
+      ;;
+    Debian*)
+      distribution=debian
+      ;;
+    *)
+      echo "E: not supported." >&2
+      return 1
+      ;;
+  esac
+
+  sudo apt install curl apt-transport-https ca-certificates software-properties-common
+  curl -fsSL https://download.docker.com/linux/$distribution/gpg| sudo apt-key add -
+  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$distribution $(lsb_release -cs) stable"
+  sudo apt update
+  sudo apt install docker-ce
+}
+
+function install_docker_compose() {
+
+  _exists docker-compose && return 0
+
+  # get the latest version
+  local version=$(curl -w "%{redirect_url}" -s -o /dev/null https://github.com/docker/compose/releases/latest| awk -F/ '{print $NF}')
+  local url="https://github.com/docker/compose/releases/download/$version/docker-compose-$(uname -s)-$(uname -m)"
+
+  sudo curl -L $url -o /usr/local/bin/docker-compose
+  sudo chmod +x /usr/local/bin/docker-compose
+}
+
+install_docker
+install_docker_compose
