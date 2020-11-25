@@ -1,6 +1,17 @@
 # install
 ```
 $ git clone https://github.com/kazhr/config.git
-$ cd config
+```
+
+# Usage
+## setup dotfiles
+```
+$ cd $(repo_dir)/dotfiles
+$ ./install
+```
+
+## setup nvim
+```
+$ cd $(repo_dir)/nvim
 $ ./install
 ```
