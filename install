@@ -1,9 +1,9 @@
 #!/bin/bash
-set -eu
+set -u
 
 # environment
-REPO_DIR=$(cd $(dirname $0); pwd)
-PYENV_ROOT=~/.pyenv
+REPO_DIR=$(git rev-parse --show-toplevel)
+PYENV_ROOT=$HOME/.pyenv
 
 export PYENV_ROOT
 export PATH=$PATH:$PYENV_ROOT/bin
@@ -91,7 +91,7 @@ function install_conda() {
   fi
 }
 
-function install_fzf() {
+function _install_fzf() {
 
   # skip if already exists
   [ -d ~/.fzf ] && return 0
@@ -120,9 +120,9 @@ function install_fzf() {
 
 function setup_dotfiles() {
 
-  ln -sf $REPO_DIR/dotfiles/environment ~/.bash_profile
-  ln -sf $REPO_DIR/dotfiles/bashrc ~/.bashrc
-  ln -sf $REPO_DIR/dotfiles/aliases ~/.aliases
+  ln -sf $REPO_DIR/dotfiles/environment $HOME/.bash_profile
+  ln -sf $REPO_DIR/dotfiles/bashrc $HOME/.bashrc
+  ln -sf $REPO_DIR/dotfiles/aliases $HOME/.aliases
 
   if [ ! -d $HOME/.nord-dircolors ]; then
     _require git
@@ -130,18 +130,16 @@ function setup_dotfiles() {
   fi
   ln -sf $HOME/.nord-dircolors/src/dir_colors $HOME/.dir_colors
 
-  if _exists zsh; then
-    ln -sf $REPO_DIR/dotfiles/environment ~/.zshenv
-    ln -sf $REPO_DIR/dotfiles/zshrc       ~/.zshrc
-  fi
-
   if _exists vim; then
-    ln -sf $REPO_DIR/dotfiles/vimrc       ~/.vimrc
+    ln -sf $REPO_DIR/dotfiles/vimrc $HOME/.vimrc
   fi
 }
 
 function setup_zsh() {
   _require zsh git curl
+
+  ln -sf $REPO_DIR/dotfiles/environment $HOME/.zshenv
+  ln -sf $REPO_DIR/dotfiles/zshrc       $HOME/.zshrc
 
   if [ ! -d $HOME/.enhancd ]; then
     git clone https://github.com/b4b4r07/enhancd $HOME/.enhancd
@@ -150,6 +148,8 @@ function setup_zsh() {
   if [ ! -f $HOME/.csa.zsh ]; then
     curl https://raw.githubusercontent.com/uasi/zsh-context-sensitive-alias/master/csa.zsh -o $HOME/.csa.zsh
   fi
+
+  _install_fzf
 }
 
 function setup_nvim() {
@@ -185,9 +185,19 @@ function setup_nvim() {
   done
 }
 
-install_pyenv
-install_conda
-install_fzf
-setup_dotfiles
-setup_zsh
-setup_nvim
+
+# get the current dname
+dname=$(git rev-parse --show-prefix| tr -d '/\n')
+
+# main
+case $dname in
+  dotfiles)
+    setup_dotfiles
+    setup_zsh
+    install_fzf
+    ;;
+  nvim)
+    install_pyenv
+    install_conda
+    setup_nvim
+esac
