@@ -21,12 +21,14 @@ function _require() {
   # input:
   #   cmd1 [cmd2...]
   local cmd
+  local result=0
   for cmd in $*; do
     if ! _exists $cmd; then
       echo "E: not found $cmd!" >&2
-      return 1
+      result=1
     fi
   done
+  return $result
 }
 
 function _ask() {
@@ -152,6 +154,31 @@ function setup_zsh() {
   _install_fzf
 }
 
+function install_nvim() {
+  # from source
+
+  _exists nvim && return 0
+
+  # for Ubuntu/Debian
+  echo "if false, see:"
+  echo "  https://github.com/neovim/neovim/wiki/Building-Neovim#build-prerequisites"
+  _require ninja gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
+
+  _require git
+
+  local install_dir=/opt/neovim
+  if [ ! -d $install_dir ]; then
+    sudo git https://github.com/neovim/neovim.git $install_dir
+  fi
+
+  function _make_install() {
+    sudo git checkout stable
+    sudo make CMAKE_BUILD_TYPE=Release
+    sudo make install
+  }
+  (cd $install_dir && _make_install)
+}
+
 function setup_nvim() {
 
   # skip if not exists
@@ -199,5 +226,7 @@ case $dname in
   nvim)
     install_pyenv
     install_conda
+    install_nvim
     setup_nvim
+    ;;
 esac
