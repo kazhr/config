@@ -15,3 +15,9 @@ $ ./install
 $ cd $(repo_dir)/nvim
 $ ./install
 ```
+
+## setup docker
+```
+$ cd $(repo_dir)/docker
+$ ./install
+```
