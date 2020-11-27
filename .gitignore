@@ -1,2 +1,2 @@
-docker/nginx/html
-docker/nginx/log
+docker/nginx/log/*
+!.gitkeep
