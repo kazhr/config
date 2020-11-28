@@ -1,5 +1,5 @@
 #!/bin/bash
-set -u
+set -eu
 
 # environment
 REPO_DIR=$(git rev-parse --show-toplevel)
@@ -162,13 +162,19 @@ function install_nvim() {
   # for Ubuntu/Debian
   echo "if false, see:"
   echo "  https://github.com/neovim/neovim/wiki/Building-Neovim#build-prerequisites"
-  _require ninja gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
+  if _exists apt; then
+    sudo apt install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
+  elif _exists yum; then
+    sudo yum -y install ninja-build libtool autoconf automake cmake gcc gcc-c++ make pkgconfig unzip patch
+  else
+    return 1
+  fi
 
   _require git
 
   local install_dir=/opt/neovim
   if [ ! -d $install_dir ]; then
-    sudo git https://github.com/neovim/neovim.git $install_dir
+    sudo git clone https://github.com/neovim/neovim.git $install_dir
   fi
 
   function _make_install() {
@@ -237,7 +243,7 @@ function install_docker() {
   curl -fsSL https://download.docker.com/linux/$distribution/gpg| sudo apt-key add -
   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$distribution $(lsb_release -cs) stable"
   sudo apt update
-  sudo apt install docker-ce
+  sudo apt install -y docker-ce
 }
 
 function install_docker_compose() {
@@ -261,7 +267,6 @@ case $dname in
   dotfiles)
     setup_dotfiles
     setup_zsh
-    install_fzf
     ;;
   nvim)
     install_pyenv
