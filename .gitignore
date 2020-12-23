@@ -1,2 +1,3 @@
 docker/nginx/log/*
+aws/src
 !.gitkeep
