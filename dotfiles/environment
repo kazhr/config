@@ -1,4 +1,4 @@
-# .zshenv, .bash_profile  共通設定
+# .zshenv, .bash_profile 共通設定
 
 # --
 # locale
@@ -11,7 +11,7 @@ export LC_CTYPE=ja_JP.UTF-8
 # --
 PYENV_ROOT=$HOME/.pyenv
 
-if [ -e $PYENV_ROOT ]; then
+if [ -d $PYENV_ROOT ]; then
   export VIRTUAL_ENV_DISABLE_PROMPT=1
   export PYENV_ROOT
   PATH=$PATH:$PYENV_ROOT/bin
@@ -33,7 +33,7 @@ if [[ $OSTYPE =~ darwin ]]; then
 fi
 
 # --
-# load
+# for bash
 # --
 if [[ -n $BASH_VERSION ]]; then
   . $HOME/.bashrc
