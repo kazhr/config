@@ -1,4 +1,5 @@
-# デフォルト上書き
+# デフォルトの挙動を上書き
+# ------------------------
 alias ls='ls --color=auto'
 alias l='ls -CF'
 alias ll='ls -AlFh'
@@ -10,10 +11,44 @@ alias mv='mv -i'
 # -i: 上書き確認
 
 alias grep="grep --color=auto"
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
+# editor
 if type nvim &>/dev/null; then
   alias vi="nvim"
 
  elif type vim &>/dev/null; then
   alias vi="vim"
+fi
+
+# ショートカット
+# --------------
+alias remove_unlink='find . -xtype l -exec unlink {} \;'
+
+# suffix alias (enable in zsh)
+if [ -n "$ZSH_VERSION" ]; then
+  alias -s {png,jpg}=eog
+
+  function _extract(){
+    case $1 in
+      *.tar.gz|*.tgz) tar xzvf $1;;
+      *.tar.xz) tar Jxvf $1;;
+      *.zip) unzip $1;;
+      *.lzh) lha e $1;;
+      *.tar.bz2|*.tbz) tar xjvf $1;;
+      *.tar.Z) tar zxvf $1;;
+      *.gz) gzip -d $1;;
+      *.bz2) bzip2 -dc $1;;
+      *.Z) uncompress $1;;
+      *.tar) tar xvf $1;;
+      *.arj) unarj $1;;
+    esac
+  }
+  alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=_extract
+
+  function _install_dpkg(){
+    sudo dpkg -i $1
+  }
+  alias -s deb=_install_dpkg
 fi
