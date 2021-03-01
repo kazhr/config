@@ -1,13 +1,6 @@
 #!/bin/bash
 set -eu
 
-# environment
-REPO_DIR=$(git rev-parse --show-toplevel)
-PYENV_ROOT=$HOME/.pyenv
-
-export PYENV_ROOT
-export PATH=$PATH:$PYENV_ROOT/bin
-
 # local functions
 function _exists() {
   # check if a command exists
@@ -50,7 +43,23 @@ function _ask() {
 }
 
 # main functions
-function install_pyenv() {
+function clone_config() {
+  _require git
+
+  # default
+  local install_dir=$HOME/.local/repo/config
+  if [ ! -e $install_dir ]; then
+    mkdir -p $install_dir
+  fi
+
+  git clone https://github.com/kazhr/config $install_dir/
+}
+
+function _install_pyenv() {
+
+  PYENV_ROOT=$HOME/.pyenv
+  export PYENV_ROOT
+  export PATH=$PATH:$PYENV_ROOT/bin
 
   # skip if already exists
   _exists pyenv && return 0
@@ -77,9 +86,9 @@ function install_pyenv() {
   esac
 }
 
-function install_conda() {
+function setup_conda() {
 
-  _require pyenv
+  _install_pyenv
   eval "$(pyenv init -)"
 
   conda3='miniconda3-latest'
@@ -87,10 +96,10 @@ function install_conda() {
     pyenv install $conda3
   fi
 
-  conda2='miniconda2-latest'
-  if [ ! -d $PYENV_ROOT/versions/$conda2 ]; then
-    pyenv install $conda2
-  fi
+  #conda2='miniconda2-latest'
+  #if [ ! -d $PYENV_ROOT/versions/$conda2 ]; then
+  #  pyenv install $conda2
+  #fi
 }
 
 function _install_fzf() {
@@ -122,6 +131,7 @@ function _install_fzf() {
 
 function setup_dotfiles() {
 
+  REPO_DIR=$(git rev-parse --show-toplevel)
   ln -sf $REPO_DIR/dotfiles/environment $HOME/.bash_profile
   ln -sf $REPO_DIR/dotfiles/bashrc $HOME/.bashrc
   ln -sf $REPO_DIR/dotfiles/aliases $HOME/.aliases
@@ -140,6 +150,7 @@ function setup_dotfiles() {
 function setup_zsh() {
   _require zsh git curl
 
+  REPO_DIR=$(git rev-parse --show-toplevel)
   ln -sf $REPO_DIR/dotfiles/environment $HOME/.zshenv
   ln -sf $REPO_DIR/dotfiles/zshrc       $HOME/.zshrc
 
@@ -155,7 +166,6 @@ function setup_zsh() {
 }
 
 function install_nvim() {
-  # from source
 
   _exists nvim && return 0
 
@@ -163,20 +173,20 @@ function install_nvim() {
   echo "if false, see:"
   echo "  https://github.com/neovim/neovim/wiki/Building-Neovim#build-prerequisites"
   if _exists apt; then
-    sudo apt install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
+    sudo apt -y install git ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
   elif _exists yum; then
-    sudo yum -y install ninja-build libtool autoconf automake cmake gcc gcc-c++ make pkgconfig unzip patch
+    sudo yum -y install git ninja-build libtool autoconf automake cmake gcc gcc-c++ make pkgconfig unzip patch
   else
+    echo "E: not supported." >&2
     return 1
   fi
 
-  _require git
-
   local install_dir=/opt/neovim
   if [ ! -d $install_dir ]; then
-    sudo git clone https://github.com/neovim/neovim.git $install_dir
+    sudo git clone https://github.com/neovim/neovim.git $install_dir/
   fi
 
+  # from source
   function _make_install() {
     sudo git checkout stable
     sudo make CMAKE_BUILD_TYPE=Release
@@ -193,57 +203,76 @@ function setup_nvim() {
   if [ ! -d ~/.config/nvim ]; then
     mkdir -p ~/.config/nvim
   fi
+  REPO_DIR=$(git rev-parse --show-toplevel)
   ln -sf $REPO_DIR/nvim/init.vim ~/.config/nvim/init.vim
   ln -sf $REPO_DIR/nvim/dein.vim ~/.config/nvim/dein.vim
   ln -sf $REPO_DIR/nvim/dein.toml ~/.config/nvim/dein.toml
   ln -sf $REPO_DIR/nvim/python.toml ~/.config/nvim/python.toml
 
-  install_conda
+  setup_conda
   export PYENV_VERSION='miniconda3-latest'
   echo "let g:python3_host_prog = '$(pyenv which python)'" > ~/.config/nvim/python.vim
 
   for pkg in neovim flake8; do
     if ! python -c "import $pkg" &>/dev/null; then
-      pip install $pkg
+      python -m pip install $pkg
     fi
   done
 
-  export PYENV_VERSION='miniconda2-latest'
-  echo "let g:python_host_prog = '$(pyenv which python)'" >> ~/.config/nvim/python.vim
+  #export PYENV_VERSION='miniconda2-latest'
+  #echo "let g:python_host_prog = '$(pyenv which python)'" >> ~/.config/nvim/python.vim
 
-  for pkg in neovim; do
-    if ! python -c "import $pkg" &>/dev/null; then
-      pip install $pkg
-    fi
-  done
+  #for pkg in neovim; do
+  #  if ! python -c "import $pkg" &>/dev/null; then
+  #    python -m pip install $pkg
+  #  fi
+  #done
 }
 
 function install_docker() {
 
   _exists docker && return 0
 
-  # for debian/ubuntu distribution
-  _require lsb_release
+  function _install_to_debian() {
+    # for debian/ubuntu distribution
 
-  local distribution
-  case $(lsb_release -sd) in
-    Ubuntu*)
-      distribution=ubuntu
-      ;;
-    Debian*)
-      distribution=debian
-      ;;
-    *)
-      echo "E: not supported." >&2
-      return 1
-      ;;
-  esac
+    local distribution
+    case $(lsb_release -sd) in
+      Ubuntu*)
+        distribution=ubuntu
+        ;;
+      Debian*)
+        distribution=debian
+        ;;
+      *)
+        echo "E: not supported." >&2
+        return 1
+        ;;
+    esac
 
-  sudo apt install curl apt-transport-https ca-certificates software-properties-common
-  curl -fsSL https://download.docker.com/linux/$distribution/gpg| sudo apt-key add -
-  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$distribution $(lsb_release -cs) stable"
-  sudo apt update
-  sudo apt install -y docker-ce
+    sudo apt install curl apt-transport-https ca-certificates software-properties-common
+    curl -fsSL https://download.docker.com/linux/$distribution/gpg| sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$distribution $(lsb_release -cs) stable"
+    sudo apt update && sudo apt install -y docker-ce
+  }
+
+  function _install_to_centos() {
+    # for centos distribution
+    sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum -y install docker-ce
+  }
+
+  if _exists apt; then
+    _install_to_debian
+
+  elif _exists yum; then
+    _install_to_centos
+
+  else
+    echo "E: not supported." >&2
+    return 1
+  fi
 }
 
 function install_docker_compose() {
@@ -271,18 +300,26 @@ function install_awscli() {
 }
 
 
-# get the current dname
-dname=$(git rev-parse --show-prefix| tr -d '/\n')
-
 # main
-case $dname in
+if [ $# -eq 0 ]; then
+   # get the current dname
+  target=$(git rev-parse --show-prefix| tr -d '/\n')
+else
+  target=$1
+fi
+
+case $target in
+  config)
+    clone_config
+    ;;
   dotfiles)
     setup_dotfiles
     setup_zsh
     ;;
+  conda)
+    setup_conda
+    ;;
   nvim)
-    install_pyenv
-    install_conda
     install_nvim
     setup_nvim
     ;;
@@ -292,4 +329,5 @@ case $dname in
     ;;
   aws)
     install_awscli
+    ;;
 esac
