@@ -165,7 +165,7 @@ function setup_zsh() {
   _install_fzf
 }
 
-function install_nvim() {
+function _install_nvim() {
 
   _exists nvim && return 0
 
@@ -197,8 +197,7 @@ function install_nvim() {
 
 function setup_nvim() {
 
-  # skip if not exists
-  _exists nvim || return 0
+  _install_nvim
 
   if [ ! -d ~/.config/nvim ]; then
     mkdir -p ~/.config/nvim
@@ -320,7 +319,6 @@ case $target in
     setup_conda
     ;;
   nvim)
-    install_nvim
     setup_nvim
     ;;
   docker)
