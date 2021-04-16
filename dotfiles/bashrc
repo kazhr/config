@@ -18,6 +18,7 @@ export HISTCONTROL=ignoredups
 export HISTIGNORE="fg*:bg*:history*:cd*"
 export HISTSIZE=100000
 # incremental search
+export FZF_DEFAULT_OPTS='--height 40% --reverse'
 [ -f ~/.fzf.bash ] && . ~/.fzf.bash
 
 # disable screen lock
