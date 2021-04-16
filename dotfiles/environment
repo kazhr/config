@@ -25,6 +25,11 @@ if [ -d $HOME/bin ]; then
   PATH=$PATH:$HOME/bin
 fi
 
+# WSL2環境
+if [ -d /mnt/c/WINDOWS/system32/ ]; then
+  PATH=$PATH:/mnt/c/WINDOWS/system32
+fi
+
 export PATH
 
 if [[ $OSTYPE =~ darwin ]]; then

@@ -26,6 +26,19 @@ fi
 # --------------
 alias remove_unlink='find . -xtype l -exec unlink {} \;'
 
+# クリップボードにコピー
+if xsel &>/dev/null; then
+  alias C='xsel --input --clipboard'
+
+elif type pbcopy &>/dev/null; then
+  # for mac
+  alias C='pbcopy'
+
+elif type clip.exe &>/dev/null; then
+  # for WSL
+  alias C='clip.exe'
+fi
+
 # suffix alias (enable in zsh)
 if [ -n "$ZSH_VERSION" ]; then
   alias -s {png,jpg}=eog
