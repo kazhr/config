@@ -48,6 +48,11 @@ on_ft = 'toml'
 repo = 'cespare/vim-toml'
 on_ft = 'toml'
 
+# jinja2 syntax
+[[plugins]]
+repo = 'lepture/vim-jinja'
+on_ft = 'jinja'
+
 # 行末のスペースをハイライト
 [[plugins]]
 repo = 'bronson/vim-trailing-whitespace'
