@@ -207,6 +207,9 @@ function setup_nvim() {
   ln -sf $REPO_DIR/nvim/dein.vim ~/.config/nvim/dein.vim
   ln -sf $REPO_DIR/nvim/dein.toml ~/.config/nvim/dein.toml
   ln -sf $REPO_DIR/nvim/python.toml ~/.config/nvim/python.toml
+  if [ ! -e ~/.config/nvim/templates ]; then
+    ln -sf $REPO_DIR/nvim/templates ~/.config/nvim/templates
+  fi
 
   setup_conda
   export PYENV_VERSION='miniconda3-latest'

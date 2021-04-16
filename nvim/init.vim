@@ -126,6 +126,14 @@ augroup my_group
   "au WinEnter,BufRead * set cursorcolumn
   " 現在位置にカーソルを引く
 
+  " bash
+  au BufNewFile *.sh  0r ~/.config/nvim/templates/bash
+
+  " yaml
+  au BufNewFile *.yml 0r ~/.config/nvim/templates/yaml
+
+  " ptyon
+  au BufNewFile *.py  0r ~/.config/nvim/templates/python
   au FileType python set ts=8 sw=4 sts=4
   au FileType python set colorcolumn=80
   " 80行目に縦線を表示
