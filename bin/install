@@ -301,6 +301,41 @@ function install_awscli() {
   # sudo ./src/aws/install
 }
 
+function install_npm() {
+
+  _exists npm && return 0
+
+  function _install_in_debian() {
+    sudo apt install -y nodejs npm
+  }
+
+  if _exists apt; then
+    _install_in_debian
+
+  else
+    echo "E: not supported yet!" &>2
+    return 1
+  fi
+}
+
+function setup_json-server() {
+
+  install_npm
+
+  local install_dir="$HOME/.json-server"
+  if [ -e $install_dir ]; then
+    return 0
+  fi
+
+  function _setup() {
+    npm init -y
+    npm i -D json-server
+  }
+
+  mkdir $install_dir
+  (cd $install_dir && _setup)
+}
+
 
 # main
 if [ $# -eq 0 ]; then

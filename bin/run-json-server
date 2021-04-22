@@ -1,0 +1,30 @@
+#!/bin/bash
+set -eu
+
+# check
+if [ ! -e ./node_modules ]; then
+  echo "node_modules does not find in the current directory, bye."
+  exit 0
+fi
+
+cmd="./node_modules/.bin/json-server"
+
+# install
+if [ ! -e  $cmd ]; then
+  npm i -D json-server
+fi
+
+# mock data
+db="./mock.json"
+if [ ! -e $db ]; then
+  cat >$db <<-EOT
+	{
+	  "mock": {
+	    "id": 1
+	  }
+	}
+	EOT
+fi
+
+# run
+$cmd $db
