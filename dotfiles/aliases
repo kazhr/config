@@ -24,6 +24,9 @@ fi
 
 # ショートカット
 # --------------
+alias d='df -h'
+alias e='exit'
+
 alias remove_unlink='find . -xtype l -exec unlink {} \;'
 
 # クリップボードにコピー
