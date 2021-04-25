@@ -10,11 +10,16 @@ export LC_CTYPE=ja_JP.UTF-8
 # environment
 # --
 PYENV_ROOT=$HOME/.pyenv
+RBENV_ROOT=$HOME/.rbenv
 
 if [ -d $PYENV_ROOT ]; then
   export VIRTUAL_ENV_DISABLE_PROMPT=1
   export PYENV_ROOT
   PATH=$PATH:$PYENV_ROOT/bin
+fi
+
+if [ -e $RBENV_ROOT ]; then
+  PATH=$PATH:$RBENV_ROOT/bin
 fi
 
 if [ -d $HOME/.local/bin ]; then

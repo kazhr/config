@@ -102,6 +102,43 @@ function setup_conda() {
   #fi
 }
 
+function _install_rbenv() {
+  RBENV_ROOT=$HOME/.rbenv
+  export RBENV_ROOT
+
+  # skip if already exsits
+  _exists rbenv && return 0
+
+  # skip if no
+  _ask "Do you want to install rbenv?" || return 0
+
+  git clone https://github.com/sstephenson/rbenv.git $RBENV_ROOT
+  git clone https://github.com/sstephenson/ruby-build.git $RBENV_ROOT/plugins/ruby-build
+}
+
+function install_ruby() {
+  _install_rbenv
+  eval "$(rbenv init -)"
+
+  rbenv install 2.7.3
+  rbenv global 2.7.3
+}
+
+function install_serverspec() {
+  _require bundle
+
+  cat >./Gemfile <<-EOT
+	source "https://rubygems.org"
+	
+	gem 'serverspec'
+	gem 'rake'
+	gem 'highline'
+	EOT
+
+  bundle install
+  bundle exec serverspec-init
+}
+
 function _install_fzf() {
 
   # skip if already exists
@@ -365,5 +402,8 @@ case $target in
     ;;
   aws)
     install_awscli
+    ;;
+  serverspec)
+    install_ruby
     ;;
 esac
