@@ -105,6 +105,7 @@ function setup_conda() {
 function _install_rbenv() {
   RBENV_ROOT=$HOME/.rbenv
   export RBENV_ROOT
+  export PATH=$PATH:$RBENV_ROOT/bin
 
   # skip if already exsits
   _exists rbenv && return 0
@@ -120,8 +121,11 @@ function install_ruby() {
   _install_rbenv
   eval "$(rbenv init -)"
 
-  rbenv install 2.7.3
-  rbenv global 2.7.3
+  local ruby_version=2.7.3
+  if [[ $(cat $RBENV_ROOT/version) != "$ruby_version" ]]; then
+    rbenv install $ruby_version
+    rbenv global $ruby_version
+  fi
 }
 
 function install_serverspec() {
@@ -373,7 +377,6 @@ function setup_json-server() {
   (cd $install_dir && _setup)
 }
 
-
 # main
 if [ $# -eq 0 ]; then
    # get the current dname
@@ -405,5 +408,6 @@ case $target in
     ;;
   serverspec)
     install_ruby
+    install_serverspec
     ;;
 esac
