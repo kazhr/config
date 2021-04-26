@@ -1,0 +1,42 @@
+#!/bin/bash
+set -eu
+
+function convert() {
+  # input
+  #   1: iso file
+
+  output=${1%.*}
+  hdiutil convert -format UDRW -o $output $1
+
+  echo $output.dmg
+}
+
+function get_usb() {
+  dev=$(diskutil list| grep 'external, physical'| awk '{print $1}')
+  if [ -z $dev ]; then
+    return 1
+  fi
+  echo $dev
+}
+
+function format() {
+  # input
+  #   1: usb device
+
+  diskutil unmountDisk $1
+
+  # erase
+  diskutil eraseDisk MS-DOS UNTITLED $1
+}
+
+function write() {
+  # input
+  #   1: usb device
+  #   2: dmg file
+
+  diskutil unmountDisk $1
+
+  dname=$(echo $1| awk -F/ '{print $NF}')
+  # write
+  sudo dd if=$2 of=/dev/r${dname} bs=4M
+}
