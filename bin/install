@@ -359,6 +359,15 @@ function install_npm() {
   fi
 }
 
+function install_ansible() {
+  # for ubuntu20
+  sudo apt install software-properties-common
+  sudo apt-add-repository --yes --update ppa:ansible/ansible
+  sudo apt update
+  sudo apt install ansible
+  python -m pip install ansible
+}
+
 function setup_json-server() {
 
   install_npm
