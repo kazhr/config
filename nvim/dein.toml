@@ -7,6 +7,20 @@ hook_post_update = '''
   let g:dein#plugin.build = 'make'
 '''
 
+# 補完plugin
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+
+  call deoplete#custom#option({
+       \   'auto_complete_delay': 200,
+       \   'smart_case': v:true,
+       \ })
+  " 入力からポップアップ表示までのdealy[ms]
+  " 大文字小文字を区別
+'''
+
 # 下部にステータスラインを表示
 [[plugins]]
 repo = 'itchyny/lightline.vim'
@@ -101,6 +115,7 @@ hook_add = '''
         \ }
       \ }
 
+  " 前回の表示内容をクローズしてから実行
   nmap ,r :QuickRun -mode n<CR>
   vmap ,r :QuickRun -mode v<CR>
 '''
