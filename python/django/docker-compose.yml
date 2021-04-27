@@ -1,0 +1,17 @@
+version: "3"
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx/log:/var/log/nginx
+      - ./mysite:/opt/app
+
+  app:
+    build: ./gunicorn
+    working_dir: /opt/app
+    command: python manage.py runserver 0.0.0.0:8000
+    #command: gunicorn mysite.wsgi --bind=0.0.0.0:8000
+    volumes:
+      - ./mysite:/opt/app
