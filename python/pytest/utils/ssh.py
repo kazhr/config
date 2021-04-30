@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from contextlib import contextmanager
 import paramiko
 
 
@@ -30,7 +31,7 @@ class SSHClient(object):
     """
 
     def __init__(self, hostname, username, password,
-                 port=22, policy="AutoAdd", timeout=5):
+                 ssh_port=22, policy="AutoAdd", timeout=5):
 
         policy = {
             "AutoAdd": paramiko.AutoAddPolicy(),
@@ -44,26 +45,24 @@ class SSHClient(object):
         self.hostname = hostname
         self.username = username
         self.password = password
-        self.port = port
+        self.ssh_port = ssh_port
         self.timeout = timeout
 
+    @contextmanager
     def connect(self):
         """
         Connect to the host
         """
         self.client.connect(
             hostname=self.hostname,
-            port=self.port,
+            port=self.ssh_port,
             username=self.username,
             password=self.password,
         )
-        return self
-
-    def __enter__(self):
-        return self.client
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.client.close()
+        try:
+            yield self.client
+        finally:
+            self.client.close()
 
     def exec_command(self, command):
         """
