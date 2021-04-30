@@ -3,7 +3,7 @@
 import paramiko
 
 
-class SSH(object):
+class SSHClient(object):
     """
     SSH
 
