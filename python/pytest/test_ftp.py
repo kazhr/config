@@ -14,7 +14,7 @@ class TestFTP:
         assert not ftp_client.exists(remote_file)
 
         try:
-            # put test_message within a temp file
+            # put test_message within a file
             with tempfile.NamedTemporaryFile(mode="w") as fp:
                 fp.write(test_message)
                 fp.seek(0)
@@ -28,9 +28,10 @@ class TestFTP:
             assert received_message == test_message
 
         finally:
-            # remove the test file from remote
+            # remove the test file from host
             ftp_client.delete(remote_file)
 
+        # check again
         assert not ftp_client.exists(remote_file)
 
     def test_directory(self, ftp_client):
@@ -50,4 +51,5 @@ class TestFTP:
         finally:
             ftp_client.rmdir(remote_dir)
 
+        # check again
         assert not ftp_client.exists(remote_dir)
