@@ -6,3 +6,7 @@ docker/nginx/log/*
 
 # downloaded files
 aws/src
+
+# Django
+db.sqlite3
+django/app/static
