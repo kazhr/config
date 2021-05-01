@@ -1,0 +1,11 @@
+---
+- name: Install apache in centos
+  ansible.builtin.yum:
+    name: httpd
+    state: latest
+
+- name: Start and Enable apache
+  ansible.builtin.systemd:
+    name: httpd
+    state: started
+    enabled: yes
