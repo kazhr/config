@@ -365,7 +365,7 @@ function install_ansible() {
   sudo apt-add-repository --yes --update ppa:ansible/ansible
   sudo apt update
   sudo apt install ansible
-  python -m pip install ansible
+  python -m pip install ansible pytest-testinfra
 }
 
 function setup_json-server() {
@@ -414,6 +414,9 @@ case $target in
     ;;
   aws)
     install_awscli
+    ;;
+  ansible)
+    install_ansible
     ;;
   serverspec)
     install_ruby
