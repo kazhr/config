@@ -1,0 +1,49 @@
+#!/bin/bash
+set -e
+
+# defaults
+SUBNET=all
+
+function usage() {
+cat <<EOT >&2
+usage: ${0##*/} [-h] [-l SUBNET]
+                [pytest_options]
+                [file_or_dir] [file_or_dir] [...]
+
+optional arguments:
+  -l SUBNET
+    see ansible-playbook help, default: $SUBNET
+
+  pytest_options
+    see pytest help
+EOT
+}
+
+function get_arg() {
+  if [ -z $1 ] || [[ $1 =~ ^-+ ]]; then
+    usage
+    return 1
+  fi
+  echo $1
+}
+
+args=""
+while [ $# -ne 0 ]; do
+  case $1 in
+    -h)
+      usage
+      exit
+      ;;
+    -l)
+      shift
+      SUBNET=$(get_arg $1)
+      ;;
+    *)
+      args=$1
+      ;;
+  esac
+  shift
+done
+
+# main
+PYTHONPATH="testinfra/src" pytest --hosts="ansible://$SUBNET" $args
