@@ -1,0 +1,18 @@
+# disable startup message
+startup_message off
+
+# disable bell
+vbell off
+
+# エスケープキーを ctrl-t に変更
+escape ^Tt
+
+# マウススクロールを有効化
+termcapinfo xterm* ti@:te@
+defscrollback 100000
+
+# color
+term xterm-256color
+
+# ステータス表示
+hardstatus alwayslastline '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][%{B}%Y-%m-%d %{W}%c:%s %{g}]'
