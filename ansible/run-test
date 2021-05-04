@@ -46,4 +46,4 @@ while [ $# -ne 0 ]; do
 done
 
 # main
-PYTHONPATH="testinfra/src" pytest --hosts="ansible://$SUBNET" $args
+PYTHONPATH="testinfra/src" pytest --hosts="ansible://$SUBNET" --ssh-config="./ssh_config" $args

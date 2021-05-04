@@ -1,0 +1,8 @@
+version: '3'
+services:
+  centos:
+    build: ./centos
+    ports:
+      - "22:22"
+      - "80:80"
+    privileged: true
