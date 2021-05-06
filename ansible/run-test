@@ -39,7 +39,7 @@ while [ $# -ne 0 ]; do
       SUBNET=$(get_arg $1)
       ;;
     *)
-      args=$1
+      args="${args} $1"
       ;;
   esac
   shift
