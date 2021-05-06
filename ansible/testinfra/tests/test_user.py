@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-def test_ansible_user(host):
+class User:
+    def test_ansible_user(self, host):
+        assert host.check_output("whoami") == self.username
 
-    assert host.check_output("whoami") == "developer"
+
+class TestUser(User):
+    username = "developer"
