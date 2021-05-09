@@ -9,4 +9,5 @@ aws/src
 
 # Django
 db.sqlite3
-django/app/static
+dist/
+*.egg-info/

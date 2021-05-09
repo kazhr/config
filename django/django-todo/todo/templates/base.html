@@ -1,0 +1,14 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+
+<meta charset="utf-8">
+<title>Todo</title>
+
+<body>
+  {% if error_message %}
+    <p><strong>{{ error_message }}</strong>
+  {% endif %}
+
+  {% block content %}
+  {% endblock %}
+</body>
