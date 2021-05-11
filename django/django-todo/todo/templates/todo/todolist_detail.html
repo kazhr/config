@@ -3,7 +3,7 @@
 
 <h1>{{ todolist.name }}のTodo</h1>
 
-<form action="{% url 'checked' todolist.pk %}" method="post">
+<form action="{% url 'todo:checked' todolist.pk %}" method="post">
   {% csrf_token %}
   {% for task in todolist.tasks.all %}
     {% if task.done %}

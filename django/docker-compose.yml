@@ -11,7 +11,6 @@ services:
   app:
     build: ./gunicorn
     working_dir: /opt/app
-    #command: gunicorn test_app.wsgi --bind=0.0.0.0:8000
-    command: python manage.py runserver 0.0.0.0:8000
+    command: ./entorypoint.sh
     volumes:
       - ./app:/opt/app

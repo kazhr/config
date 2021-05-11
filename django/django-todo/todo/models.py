@@ -1,6 +1,7 @@
 from django.db import models
+import datetime
 
-# Create your models here.
+
 class Task(models.Model):
 
     class Meta:
@@ -9,7 +10,7 @@ class Task(models.Model):
 
     name = models.CharField(
         max_length=32,
-        help_text="タスク名"
+        verbose_name="タスク名"
     )
 
     done = models.BooleanField(
@@ -17,25 +18,27 @@ class Task(models.Model):
         verbose_name="完了"
     )
 
-    def checked(self):
-        self.done = True
-        self.save()
-
-        # update the last modified date
-        for todolist in self.todolist_set.all():
-            todolist.save()
-
-    def reset(self):
-        self.done = False
-        self.save()
-
     note = models.TextField(
         blank=True,
-        help_text="ノート"
+        help_text="補足説明"
     )
 
     def __str__(self):
         return self.name
+
+    def checked(self):
+        """
+        完了マークをつける
+        """
+        self.done = True
+        self.save()
+
+    def reset(self):
+        """
+        完了マークをはずす
+        """
+        self.done = False
+        self.save()
 
 
 class TodoList(models.Model):
@@ -46,18 +49,32 @@ class TodoList(models.Model):
 
     name = models.CharField(
         max_length=32,
-        help_text="リスト名"
+        verbose_name="リスト名"
     )
 
     updated = models.DateField(
         auto_now=True,
-        help_text="最終更新日"
+        verbose_name="最終更新日"
     )
 
     tasks = models.ManyToManyField(
         Task,
-        # on_delete=models.CASCADE
+        help_text="タスク一覧"
     )
 
     def __str__(self):
         return self.name
+
+    def reset(self):
+        """
+        最終更新日が昨日だったら完了マークリセット
+        """
+        if not self.updated == datetime.date.today():
+            for task in self.tasks.all():
+                task.reset()
+
+    def touch(self):
+        """
+        最終更新日を更新
+        """
+        self.save()
