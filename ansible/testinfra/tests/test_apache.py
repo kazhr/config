@@ -4,16 +4,24 @@ from bs4 import BeautifulSoup
 import requests
 
 
-class TestApache:
+class Package:
+    package_name = "httpd"
 
-    def test_apache_is_installed(self, host):
-        package = host.package("httpd")
+    def test_package_is_installed(self, host):
+        package = host.package(self.package_name)
         assert package.is_installed
 
-    def test_apache_is_running(self, host):
-        service = host.service("httpd")
+
+class Service:
+    service_name = "httpd"
+
+    def test_service_is_running(self, host):
+        service = host.service(self.service_name)
         assert service.is_running
         assert service.is_enabled
+
+
+class TestApache(Package, Service):
 
     def test_apache_test_page(self, host):
         hostname = host.backend.hostname
