@@ -4,6 +4,6 @@ FROM alpine
 RUN adduser -s /bin/ash -D telnet && \
   echo "telnet:password"| chpasswd
 
-# run
+# run telnetd
 RUN apk add --no-cache busybox-extras
 CMD ["/usr/sbin/telnetd", "-F", "-b", "0.0.0.0"]
