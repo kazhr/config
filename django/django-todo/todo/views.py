@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.views import generic
 from django.urls import reverse
 from .models import TodoList
+import datetime
 
 
 class TodoListListView(generic.ListView):
@@ -20,8 +21,12 @@ class TodoListDetailView(generic.DetailView):
 
         # 事前処理
         todo_list = TodoList.objects.get(pk=self.kwargs["pk"])
-        todo_list.reset()
+        if not todo_list.updated == datetime.date.today():
+            # 最終更新日が昨日だったら完了マークリセット
+            todo_list.reset()
 
+            # 再描写
+            context = super().get_context_data(**kwargs)
         return context
 
 

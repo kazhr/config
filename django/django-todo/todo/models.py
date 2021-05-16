@@ -1,5 +1,4 @@
 from django.db import models
-import datetime
 
 
 class Task(models.Model):
@@ -67,11 +66,10 @@ class TodoList(models.Model):
 
     def reset(self):
         """
-        最終更新日が昨日だったら完了マークリセット
+        すべてのタスクをリセット
         """
-        if not self.updated == datetime.date.today():
-            for task in self.tasks.all():
-                task.reset()
+        for task in self.tasks.all():
+            task.reset()
 
     def touch(self):
         """
