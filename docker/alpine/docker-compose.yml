@@ -1,0 +1,10 @@
+---
+version: '3'
+services:
+  sshd:
+    build: ./ssh_nopass
+    ports:
+      - 127.0.0.1:22:22
+
+  telnetd:
+    build: ./telnet
