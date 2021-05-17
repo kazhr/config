@@ -1,6 +1,7 @@
 import datetime
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.translation import gettext as _
 
 # Create your models here.
 
