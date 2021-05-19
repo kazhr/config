@@ -17,11 +17,12 @@
         {% for task in todolist.tasks.all %}
           <tr>
             {% if task.done %}
-              <td>{{ task.name }}</th>
-              <td>完了しています, お疲れ様でした！</th>
+              <td>{{ task.name }}<br>
+                  {{ task.note }}</td>
+              <td>完了しています, お疲れ様でした！</td>
             {% else %}
-              <td>{{ task.name }}</th>
-              <td><input type="submit" class="btn btn-primary", name="{{ task.pk }}" value="Check"></th>
+              <td>{{ task.name }}</td>
+              <td><input type="submit" class="btn btn-primary", name="{{ task.pk }}" value="Check"></td>
             {% endif %}
           </tr>
         {% endfor %}
