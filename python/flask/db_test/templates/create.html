@@ -1,0 +1,28 @@
+<!doctype html>
+<meta charset="utf-8">
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST" adction="/create">
+  <table>
+    <tr>
+      <th>名前</th>
+      <td><input name="username" type="text"></td>
+    </tr>
+    <tr>
+      <th>メールアドレス</th>
+      <td><input name="mailaddr" type="text"></td>
+    </tr>
+    <tr>
+      <td><input type="submit" value="送信"></td>
+    </tr>
+  </table>
+</form>
