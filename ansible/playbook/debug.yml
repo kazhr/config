@@ -1,0 +1,10 @@
+---
+- name: debug
+  hosts: all
+  tasks:
+  - name: check ansible_host
+    ansible.builtin.debug:
+      var: ansible_host
+  - name: check ansible_port
+    ansible.builtin.debug:
+      var: ansible_port
