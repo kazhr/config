@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset="utf-8">
+
+{# flashしたメッセージを表示 #}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
+{# 要ログインページ #}
+<p><a href="{{ url_for('protected') }}">ユーザー専用ページ</a>
+
+
+{% if current_user.is_authenticated %}
+  {# ログインしていたら #}
+
+  <p>Hi {{ current_user.username }}!
+  <p><a href="{{ url_for('logout') }}">ログアウト</a>
+
+{% else %}
+  {# ログインしていなかったら #}
+
+  <p><a href="{{ url_for('login') }}">ログインページ</a>
+
+{% endif %}

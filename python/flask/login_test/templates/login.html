@@ -1,0 +1,19 @@
+<!doctype html>
+<meta charset="utf-8">
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="post">
+  {{ form.csrf_token }}
+  <p><label for="username">ユーザー名</label>
+  {{ form.username }}
+  <p><button type="submit">Login</button>
+</form>
