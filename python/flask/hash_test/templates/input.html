@@ -1,14 +1,19 @@
 <!doctype html>
 <meta charset="utf-8">
 
-<form method="POST">
-  <table>
-    <tr>
-      <th>パスワード</th>
-      <td><input name="password" type="password"></td>
-    </tr>
-    <tr>
-      <td><input type="submit" value="送信"></td>
-    </tr>
-  </table>
+<form method="POST" action="/">
+  {{ form.csrf_token }}
+  <dl>
+    <dt>{{ form.password.label }}
+    <dd>{{ form.password }}
+    {% if form.password.errors %}
+      <ul>
+      {% for error in form.password.errors %}
+        <li class="error">{{ error }}
+      {% endfor %}
+      </ul>
+    {% endif %}
+    </dd>
+  </dl>
+  <p><input type="submit" value="送信">
 </form>
