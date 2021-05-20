@@ -1,7 +1,7 @@
 <!doctype html>
 <meta charset="utf-8">
 
-<button onclick="location.href='/create'">新規作成</button>
+<button onclick="location.href='{{ url_for('create') }}'">新規作成</button>
 <table border="1">
   <tr>
     <th>id</th>
@@ -10,7 +10,7 @@
   </tr>
   {% for user in users %}
     <tr>
-      <th><a href="/user/{{ user.id }}">{{ user.id }}</a></th>
+      <th><a href="{{ url_for('detail', pk=user.id) }}">{{ user.id }}</a></th>
       <td>{{ user.username }}</td>
       <td>{{ user.mailaddr }}</td>
     </tr>

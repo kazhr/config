@@ -1,7 +1,7 @@
 <!doctype html>
 <meta charset="utf-8">
 
-<button onclick="location.href='/'">Top</button>
+<button onclick="location.href='{{ url_for('index') }}'">Top</button>
 <table border="1">
   <tr>
     <th>名前</th>
@@ -12,5 +12,5 @@
     <td>{{ user.mailaddr }}</td>
   </tr>
 </table>
-<button onclick="location.href='/user/{{ user.id }}/update'">更新</button>
-<button onclick="location.href='/user/{{ user.id }}/delete'">削除</button>
+<button onclick="location.href='{{ url_for('update', pk=user.id) }}'">更新</button>
+<button onclick="location.href='{{ url_for('delete', pk=user.id) }}'">削除</button>
