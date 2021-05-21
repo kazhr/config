@@ -1,6 +1,6 @@
 - setup
 ```
-$ python -m pip install flask flask-login flask-sqlalchemy flask-wtf is_safe_url email_validator
+$ python -m pip install -r ./requirements.txt
 ```
 
 - run
