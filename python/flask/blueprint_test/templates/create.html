@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+
+{% with messages = get_flashed_messages() %}
+  {% for message in messages %}
+    <p>{{ message }}
+  {% endfor %}
+{% endwith %}
+
+<form method="post">
+  <dl>
+    <dt>名前
+    <dd><input name="name" type="text">
+  </dl>
+  <p><input type="submit" value="登録">
+</form>

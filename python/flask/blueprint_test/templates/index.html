@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<button onclick="location.href='{{ url_for('view.create') }}'">新規作成</button>
+<table border="1">
+  <tr>
+    <th>id</th>
+    <th>名前</th>
+  </tr>
+  {% for user in users %}
+    <tr>
+      <th>{{ user.id }}</th>
+      <td>{{ user.name }}</td>
+    </tr>
+  {% endfor %}
+</table>
