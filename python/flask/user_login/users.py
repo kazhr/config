@@ -24,8 +24,6 @@ login_manager.init_app(app)
 
 # 未認証ユーザーのデフォルトリダイレクト先
 login_manager.login_view = "login"
-# リダイレクト先として許可するホスト
-allowed_hosts = []
 
 
 @login_manager.user_loader
@@ -58,7 +56,7 @@ class User(db.Model, UserMixin):
     def __init__(self, username, mailaddr, password):
         self.username = username
         self.mailaddr = mailaddr
-        self.password = password
+        self.password = generate_password_hash(password)
 
     def __repr__(self):
         return f"<User {self.username!r}>"
@@ -86,9 +84,9 @@ class PasswordForm(FlaskForm):
         validators=[
             validators.DataRequired(),
             validators.Length(min=8, max=32, message='8文字以上32文字以内で入力!'),
-            validators.Regexp('(?=.*?[A-Z])', message="一文字以上の大文字を含めてください!"),
-            validators.Regexp('(?=.*?[0-9])', message="一文字以上の数字を含めてください!"),
-            validators.Regexp('(?=.*?[#?!@$%^&*-])', message="一文字以上の記号を含めてください!(使用できる記号: #?!@$%^&*-)"),
+            # validators.Regexp('(?=.*?[A-Z])', message="一文字以上の大文字を含めてください!"),
+            # validators.Regexp('(?=.*?[0-9])', message="一文字以上の数字を含めてください!"),
+            # validators.Regexp('(?=.*?[#?!@$%^&*-])', message="一文字以上の記号を含めてください!(使用できる記号: #?!@$%^&*-)"),
             validators.EqualTo('confirm', message="パスワードが一致しません!"),
         ],
     )
@@ -129,7 +127,8 @@ def create():
 
         username = form.username.data
         mailaddr = form.mailaddr.data
-        password = generate_password_hash(form.password.data)
+        # password = generate_password_hash(form.password.data)
+        password = form.password.data
 
         # check
         if User.query.filter_by(username=username).first() is not None:
@@ -179,11 +178,11 @@ def login():
             flash(emsg)
             return redirect(url_for("login"))
 
-        login_user(user, form.remember_me.data)
+        login_user(user, remember=True)
         flash("Logged in successfully.")
 
         next = request.args.get("next")
-        if not is_safe_url(next, allowed_hosts):
+        if next is not None and not is_safe_url(next, None):
             return abort(400)
 
         return redirect(next or url_for("index"))
