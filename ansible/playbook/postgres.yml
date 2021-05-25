@@ -1,0 +1,6 @@
+---
+- name: Postgres
+  become: yes
+  hosts: centos-a
+  roles:
+    - postgres

@@ -1,0 +1,73 @@
+---
+- name: Install packages
+  yum:
+    name:
+      - postgresql-server
+      - postgresql-devel
+    state: installed
+
+- name: Make data parent dir
+  file:
+    path: /var/lib/pgsql
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Make data dir
+  file:
+    path: /var/lib/pgsql/data
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: 0755
+
+- name: Initialize pgsql
+  shell:
+    cmd: initdb --encoding=UTF-8 --no-locale -D /var/lib/pgsql/data
+    creates: /var/lib/pgsql/data/PG_VERSION
+  become_user: postgres
+
+- name: Start and Enable postgres
+  systemd:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Enable epel repository
+  yum:
+    name: epel-release
+    state: installed
+
+- name: Install requirements
+  yum:
+    name:
+      - gcc
+      - python-devel
+    state: installed
+
+- name: Install pip
+  yum:
+    name:
+      - python-pip
+    state: installed
+    enablerepo: epel
+
+- name: install psycopg2
+  pip:
+    name: psycopg2
+
+- name: Set postgres password
+  postgresql_user:
+    db: postgres
+    user: postgres
+    password: postgres
+    login_password: postgres
+
+- name: Disable trust login for Unix domain socket
+  replace:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    regexp: '^local\s+?all\s+?all\s+?trust$'
+    replace: 'local   all             all                                     md5'
+  notify:
+    - reload_postgresql
