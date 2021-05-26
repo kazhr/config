@@ -34,32 +34,43 @@
     state: started
     enabled: yes
 
-- name: Enable epel repository
-  yum:
-    name: epel-release
-    state: installed
+- name: Ensure psycopg2 available
+  shell: python -c "import psycopg2"
+  register: command_result
+  check_mode: no
+  changed_when: no
+  failed_when: command_result.rc not in [0, 1]
 
-- name: Install requirements
-  yum:
-    name:
-      - gcc
-      - python-devel
-    state: installed
+- name: Install psycopg2
+  block:
+    - name: Enable epel repository
+      yum:
+        name: epel-release
+        state: installed
 
-- name: Install pip
-  yum:
-    name:
-      - python-pip
-    state: installed
-    enablerepo: epel
+    - name: Install requirements
+      yum:
+        name:
+          - gcc
+          - python-devel
+        state: installed
 
-- name: install psycopg2
-  pip:
-    name: psycopg2
+    - name: Install pip
+      yum:
+        name:
+          - python-pip
+        state: installed
+        enablerepo: epel
+
+    - name: Install psycopg2 by pip
+      pip:
+        name: psycopg2
+
+  # /endblock
+  when: command_result.rc == 1
 
 - name: Set postgres password
   postgresql_user:
-    db: postgres
     user: postgres
     password: postgres
     login_password: postgres
@@ -71,3 +82,17 @@
     replace: 'local   all             all                                     md5'
   notify:
     - reload_postgresql
+
+- name: Create a superuser
+  postgresql_user:
+    name: test
+    password: password
+    login_password: postgres
+    role_attr_flags: SUPERUSER
+
+- name: Create a db
+  postgresql_db:
+    name: test_db
+    owner: test
+    encoding: UTF-8
+    login_password: postgres
