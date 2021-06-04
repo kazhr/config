@@ -1,0 +1,11 @@
+{% macro input(port, src) -%}
+-A INPUT -m tcp -p tcp --dport {{ port }} -s {{ src }} -j ACCEPT
+{%- endmacro -%}
+
+{% macro forward(port, dest) -%}
+-A FORWARD -m tcp -p tcp --dport {{ port }} -d {{ dest }} -j ACCEPT
+{%- endmacro -%}
+
+{{ input('22', '192.168.1.1') }}
+
+{{ forward('80', '192.168.1.1') }}
