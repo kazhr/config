@@ -3,11 +3,8 @@
 from flask import flash, Flask, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.config.from_object("config.Config")
-
 # create a db session
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 
 class User(db.Model):
@@ -33,84 +30,89 @@ class User(db.Model):
         return f"<User {self.username!r}>"
 
 
-@app.route("/")
-def index():
-    """
-    一覧表示
-    """
-    users = User.query.all()
-    return render_template("index.html", users=users)
+def create_app():
 
+    app = Flask(__name__)
+    app.config.from_object("config.Config")
 
-@app.route("/create", methods=["GET", "POST"])
-def create():
-    """
-    新規作成
-    """
-    if request.method == "GET":
-        # create用pageを表示
-        return render_template("create.html")
+    db.init_app(app)
 
-    username = request.form["username"]
-    mailaddr = request.form["mailaddr"]
+    @app.route("/")
+    def index():
+        """
+        一覧表示
+        """
+        users = User.query.all()
+        return render_template("index.html", users=users)
 
-    # check
-    if User.query.filter_by(username=username).first() is not None:
-        flash(f"{username} already exists!")
-        return redirect(url_for("create"))
+    @app.route("/create", methods=["GET", "POST"])
+    def create():
+        """
+        新規作成
+        """
+        if request.method == "GET":
+            # create用pageを表示
+            return render_template("create.html")
 
-    # add
-    user = User(username, mailaddr)
+        username = request.form["username"]
+        mailaddr = request.form["mailaddr"]
 
-    # update db
-    db.session.add(user)
-    db.session.commit()
+        # check
+        if User.query.filter_by(username=username).first() is not None:
+            flash(f"{username} already exists!")
+            return redirect(url_for("create"))
 
-    return redirect(url_for("detail", pk=user.id))
+        # add
+        user = User(username, mailaddr)
 
+        # update db
+        db.session.add(user)
+        db.session.commit()
 
-@app.route("/user/<pk>")
-def detail(pk):
-    """
-    個別詳細表示
-    """
-    user = User.query.get(pk)
-    return render_template("detail.html", user=user)
+        return redirect(url_for("detail", pk=user.id))
 
+    @app.route("/user/<pk>")
+    def detail(pk):
+        """
+        個別詳細表示
+        """
+        user = User.query.get(pk)
+        return render_template("detail.html", user=user)
 
-@app.route("/user/<pk>/update", methods=["GET", "POST"])
-def update(pk):
-    """
-    メールアドレス更新
-    """
-    user = User.query.get(pk)
+    @app.route("/user/<pk>/update", methods=["GET", "POST"])
+    def update(pk):
+        """
+        メールアドレス更新
+        """
+        user = User.query.get(pk)
 
-    if request.method == "GET":
-        # update用pageを表示
-        return render_template("update.html", user=user)
+        if request.method == "GET":
+            # update用pageを表示
+            return render_template("update.html", user=user)
 
-    user.mailaddr = request.form["new_mailaddr"]
+        user.mailaddr = request.form["new_mailaddr"]
 
-    # update db
-    db.session.add(user)
-    db.session.commit()
+        # update db
+        db.session.add(user)
+        db.session.commit()
 
-    return redirect(url_for("detail", pk=user.id))
+        return redirect(url_for("detail", pk=user.id))
 
+    @app.route("/user/<pk>/delete", methods=["GET", "POST"])
+    def delete(pk):
+        """
+        ユーザー情報を削除
+        """
+        user = User.query.get(pk)
 
-@app.route("/user/<pk>/delete", methods=["GET", "POST"])
-def delete(pk):
-    """
-    ユーザー情報を削除
-    """
-    user = User.query.get(pk)
+        if request.method == "GET":
+            # 確認用pageを表示
+            return render_template("confirm.html", user=user)
 
-    if request.method == "GET":
-        # 確認用pageを表示
-        return render_template("confirm.html", user=user)
+        # update db
+        db.session.delete(user)
+        db.session.commit()
 
-    # update db
-    db.session.delete(user)
-    db.session.commit()
+        return redirect(url_for("index"))
 
-    return redirect(url_for("index"))
+    return app

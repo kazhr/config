@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from sql import app, db
+from sql import db, create_app
+
+app = create_app()
+
 
 if __name__ == "__main__":
-    # テーブル作成
-    db.create_all()
+
+    with app.app_context():
+        # テーブル作成
+        db.create_all()
 
     # 起動
     app.run(
