@@ -1,15 +1,16 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from flask import Flask, render_template
 
 app = Flask(__name__)
 
 
 @app.route("/")
-def main():
-    msg = "Hello, World!"
-    return msg
+def index():
+    return render_template("index.html")
 
 
-@app.route("/<name>")
+@app.route("/<name>/")
 def hello(name):
     return render_template("hello.html", name=name)
 
