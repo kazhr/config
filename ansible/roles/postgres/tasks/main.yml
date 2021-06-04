@@ -34,12 +34,12 @@
     state: started
     enabled: yes
 
-- name: Ensure psycopg2 available
+- name: Ensure psycopg2 is available
   shell: python -c "import psycopg2"
-  register: command_result
+  register: is_psycopg2_available
   check_mode: no
   changed_when: no
-  failed_when: command_result.rc not in [0, 1]
+  failed_when: is_psycopg2_available.rc not in [0, 1]
 
 - name: Install psycopg2
   block:
@@ -67,7 +67,7 @@
         name: psycopg2
 
   # /endblock
-  when: command_result.rc == 1
+  when: is_psycopg2_available.rc == 1
 
 - name: Set postgres password
   postgresql_user:
@@ -78,7 +78,7 @@
 - name: Disable trust login for Unix domain socket
   replace:
     path: /var/lib/pgsql/data/pg_hba.conf
-    regexp: '^local\s+?all\s+?all\s+?trust$'
+    regexp: '^local\s+?all\s+?all\s+?trust\s*$'
     replace: 'local   all             all                                     md5'
   notify:
     - reload_postgresql
