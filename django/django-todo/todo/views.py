@@ -25,8 +25,8 @@ class TodoListDetailView(generic.DetailView):
             # 最終更新日が昨日だったら完了マークリセット
             todo_list.reset()
 
-            # 再描写
-            context = super().get_context_data(**kwargs)
+            # 再描写に必要?
+            # context = super().get_context_data(**kwargs)
         return context
 
 
