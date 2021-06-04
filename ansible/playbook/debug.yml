@@ -1,10 +1,22 @@
 ---
 - name: debug
   hosts: all
+  vars_files:
+    - ../vars_files/variables.yml
+
   tasks:
   - name: check ansible_host
     ansible.builtin.debug:
       var: ansible_host
+
+  - name: check inventory_hostname
+    ansible.builtin.debug:
+      var: inventory_hostname
+
+  - name: check variables
+    ansible.builtin.debug:
+      msg: "{{ docker_hosts[ inventory_hostname ].ip }}"
+
   - name: check ansible_port
     ansible.builtin.debug:
       var: ansible_port
