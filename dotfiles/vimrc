@@ -23,10 +23,10 @@ set shiftwidth=2
 set hlsearch
 nmap <esc><esc> :noh<cr>
 
-"カーソルの位置を最後にカーソルがあった位置まで移動    
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") |    
-                 \   exe "normal! g`\"" |    
-                 \ endif    
+"カーソルの位置を最後にカーソルがあった位置まで移動
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") |
+                 \   exe "normal! g`\"" |
+                 \ endif
 
 filetype plugin indent on
 syntax on
