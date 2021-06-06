@@ -3,7 +3,7 @@
   hosts: all
   vars_files:
     - ../vars_files/variables.yml
-
+  become: yes
   tasks:
   - name: check ansible_host
     ansible.builtin.debug:
@@ -20,3 +20,23 @@
   - name: check ansible_port
     ansible.builtin.debug:
       var: ansible_port
+
+  - name: check local python
+    ansible.builtin.debug:
+      var: ansible_playbook_python
+
+  - name: check remote python
+    ansible.builtin.debug:
+      var: hostvars[ inventory_hostname ].ansible_facts.python_version
+
+  - name: change python interpreter
+    set_fact: ansible_python_interpreter={{ hostvars[ inventory_hostname ].ansible_facts.env.HOME }}/.pyenv/shims/python
+
+  - name: get python version
+    shell:
+      cmd: python -V
+    register: python_version
+
+  - name: show python version
+    ansible.builtin.debug:
+      var: python_version
