@@ -6,21 +6,21 @@
       - postgresql-devel
     state: installed
 
-- name: Make data parent dir
-  file:
-    path: /var/lib/pgsql
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
+# - name: Make data parent dir
+#   file:
+#     path: /var/lib/pgsql
+#     state: directory
+#     owner: postgres
+#     group: postgres
+#     mode: 0755
 
-- name: Make data dir
-  file:
-    path: /var/lib/pgsql/data
-    state: directory
-    owner: postgres
-    group: postgres
-    mode: 0755
+# - name: Make data dir
+#   file:
+#     path: /var/lib/pgsql/data
+#     state: directory
+#     owner: postgres
+#     group: postgres
+#     mode: 0755
 
 - name: Initialize pgsql
   shell:
@@ -75,11 +75,11 @@
     password: postgres
     login_password: postgres
 
-- name: Disable trust login for Unix domain socket
-  replace:
-    path: /var/lib/pgsql/data/pg_hba.conf
-    regexp: '^local\s+?all\s+?all\s+?trust\s*$'
-    replace: 'local   all             all                                     md5'
+- name: Disable trust login except Unix domain socket
+  postgresql_pg_hba:
+    dest: /var/lib/pgsql/data/pg_hba.conf
+    contype: host
+    method: md5
   notify:
     - reload_postgresql
 
