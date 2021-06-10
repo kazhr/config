@@ -1,0 +1,8 @@
+---
+- name: Put a json file by Ansible
+  ansible.builtin.copy:
+    content: "{{ lookup('template', 'yaml.j2')| from_yaml| to_nice_json }}"
+    dest: /root/test.json
+    owner: root
+    group: root
+    mode: 0644

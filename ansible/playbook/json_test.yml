@@ -1,0 +1,6 @@
+---
+- name: json_test
+  become: yes
+  hosts: all
+  roles:
+    - json_test
