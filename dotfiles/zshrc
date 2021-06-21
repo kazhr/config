@@ -151,7 +151,7 @@ fi
 # enhanced
 if [ -d $HOME/.enhancd ]; then
   export ENHANCD_DISABLE_HOME=1
-  export ENHANCD_HYPHEN_NUM=40
+  export ENHANCD_HYPHEN_NUM=400
   . $HOME/.enhancd/init.sh
 fi
 
