@@ -1,0 +1,7 @@
+version: "3"
+services:
+  app:
+    image: maildev/maildev
+    ports:
+      - "127.0.0.1:1025:25"
+      - "127.0.0.1:1080:80"
