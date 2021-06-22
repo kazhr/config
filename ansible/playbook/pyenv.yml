@@ -7,9 +7,17 @@
     # $ ansible-galaxy install suzuki-shunsuke.pyenv-module
     - suzuki-shunsuke.pyenv-module
   tasks:
-    - name: Install git
+    - name: Install git & requirements to build python
       yum:
-        name: git
+        name:
+          - git
+          - gcc
+          - make
+          - openssl-devel
+          - libffi-devel
+          - bzip2-devel
+          - readline-devel
+          - sqlite-devel
         state: present
 
     - name: Checkout pyenv
