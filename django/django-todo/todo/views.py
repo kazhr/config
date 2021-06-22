@@ -30,6 +30,15 @@ class TodoListDetailView(generic.DetailView):
         return context
 
 
+def reset(request, pk):
+    """
+    強制リセット
+    """
+    todo_list = TodoList.objects.get(pk=pk)
+    todo_list.reset()
+    return HttpResponseRedirect(reverse("todo:detail", args=(pk,)))
+
+
 def checked(request, pk):
     """
     checkが押されたtaskに完了マークをつける
