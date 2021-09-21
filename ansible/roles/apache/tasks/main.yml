@@ -1,11 +1,16 @@
 ---
-- name: Install apache in centos
-  ansible.builtin.yum:
-    name: httpd
+- name: set package names
+  set_fact:
+    apache_packages: "{{ _apache_packages[ ansible_os_family ] | list }}"
+
+- name: Install apache
+  ansible.builtin.package:
+    # name: "{{ apache_packages }}"
+    name: "{{ _apache_packages[ ansible_os_family ] }}"
     state: latest
 
 - name: Start and Enable apache
   ansible.builtin.systemd:
-    name: httpd
+    name: "{{ _apache_service[ ansible_os_family ] }}"
     state: started
     enabled: yes
