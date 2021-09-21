@@ -141,4 +141,7 @@ augroup my_group
   " tex
   au BufRead,BufNewFile *.tex set wrap
   au BufRead,BufNewFile *.tex set spell
+
+  " ssh config
+  au BufNewFile,BufRead */.ssh/config.d/* setf sshconfig
 augroup END
