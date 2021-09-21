@@ -15,7 +15,8 @@ RBENV_ROOT=$HOME/.rbenv
 if [ -d $PYENV_ROOT ]; then
   export VIRTUAL_ENV_DISABLE_PROMPT=1
   export PYENV_ROOT
-  PATH=$PATH:$PYENV_ROOT/bin
+  export PATH=$PATH:$PYENV_ROOT/bin
+  eval "$(pyenv init --path)"
 fi
 
 if [ -e $RBENV_ROOT ]; then
@@ -31,9 +32,15 @@ if [ -d $HOME/bin ]; then
 fi
 
 # WSL2環境
-if [ -d /mnt/c/WINDOWS/system32/ ]; then
-  PATH=$PATH:/mnt/c/WINDOWS/system32
+if [ -d /mnt/c/Windows/system32/ ]; then
+  PATH=$PATH:/mnt/c/Windows/system32
 fi
+
+# Azure
+if [ -d "/mnt/c/Program Files (x86)/Microsoft SDKs/Azure/CLI2/wbin" ]; then
+  PATH=$PATH:"/mnt/c/Program Files (x86)/Microsoft SDKs/Azure/CLI2/wbin"
+fi
+
 
 export PATH
 
