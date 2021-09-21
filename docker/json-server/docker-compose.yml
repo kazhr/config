@@ -1,0 +1,8 @@
+version: "3"
+services:
+  app:
+    image: node:json-server
+    ports:
+      - "127.0.0.1:3333:3000"
+    # command: json-server --watch contents.json --routes routes.json -m middleware.js
+    command: json-server /contents.json --host 0.0.0.0
