@@ -27,6 +27,10 @@ fi
 alias d='df -h'
 alias e='exit'
 
+alias utf='nkf -w --overwrite'
+
+alias logging="script -f $HOME/.log/$(date +%Y%m%d%H%M%S).log"
+
 alias remove_unlink='find . -xtype l -exec unlink {} \;'
 
 # クリップボードにコピー
