@@ -29,7 +29,7 @@ alias e='exit'
 
 alias utf='nkf -w --overwrite'
 
-alias logging="script -f $HOME/.log/$(date +%Y%m%d%H%M%S).log"
+alias logging="script -f $HOME/cmdlog_$(date +%Y%m%d%H%M%S).log"
 
 alias remove_unlink='find . -xtype l -exec unlink {} \;'
 
