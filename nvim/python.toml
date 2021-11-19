@@ -34,9 +34,10 @@ hook_add = '''
   let g:ale_python_flake8_executable = g:python3_host_prog
 
   " オプション + 無視する規約
-  let g:ale_python_flake8_options = '-m flake8 --ignore=E226,E501'
+  let g:ale_python_flake8_options = '-m flake8 --ignore=E226,E501,W503'
   " E226: Missing whitespace around arithmetic operator
   " E501: Line too long
+  " W503: line break before binary operator
 
   " 左端のカラムを表示したままにしない
   let g:ale_sign_column_always = 0
