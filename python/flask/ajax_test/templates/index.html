@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <div class="row mt-4">
+      <div class="col-6">
+        <form>
+          <div class="form-group">
+            <input class="form-control" id="name" type="text" placeholder="What's Your Name?">
+          </div>
+        </form>
+        <div id="result">
+        </div>
+      </div>
+    </div>
+  </div> <!-- end container -->
+
+  <script>
+  $('#name').change(function() {
+    $.ajax({
+      type: "POST",
+      url: "/ajax",
+      dataType: "json",
+      data: { "name": $(this).val() },
+      cache: false,
+      success: function(data) {
+        $('#name').val(data["msg"]);
+      }
+    });
+  });
+  </script>
+{% endblock %}
