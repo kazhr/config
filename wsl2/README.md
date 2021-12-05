@@ -2,7 +2,9 @@
 
 ## PAHTにwindowsプログラムを追加しない
 ```
-$ sudo cp ./wsl.conf /etc/wsl.conf
+$ sudo vi /etc/wsl.conf
+[interop]
+appendWindowsPath = false
 ```
 
 ## windows側の設定
