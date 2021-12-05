@@ -3,7 +3,7 @@ FROM frolvlad/alpine-python3
 COPY crontab /var/spool/cron/crontabs/root
 COPY show_date.py /
 
-CMD ["crond", "-f", "-d", "8"]
+CMD ["crond", "-f", "-d", "5"]
 # BusyBox v1.31.1 () multi-call binary.
 #
 # Usage: crond -fbS -l N -d N -L LOGFILE -c DIR
