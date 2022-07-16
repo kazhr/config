@@ -1,8 +1,0 @@
-#!/bin/bash
-
-REPO_URL=https://github.com/mozilla/geckodriver
-function latest() {
-        local v=$(curl -w "%{redirect_url}" -sS -o /dev/null "${REPO_URL}/releases/latest"| awk -F/ '{print $NF}')
-        echo https://github.com/mozilla/geckodriver/releases/download/${v}/geckodriver-${v}-linux64.tar.gz
-}
-wget -qO- "$(latest)" | tar xvzf - -C $HOME/.local/bin/
