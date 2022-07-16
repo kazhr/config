@@ -40,6 +40,4 @@ $ ./install
 ```
 
 # see also
-- [python/flask/README.md](/python/flask/)
-- [python/pytest/README.md](/python/pytest/)
 - [wsl2/README.md](/wsl2/)
