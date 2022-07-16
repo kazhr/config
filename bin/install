@@ -256,7 +256,7 @@ function setup_nvim() {
   export PYENV_VERSION='miniconda3-latest'
   echo "let g:python3_host_prog = '$(pyenv which python)'" > ~/.config/nvim/python.vim
 
-  for pkg in neovim flake8; do
+  for pkg in neovim flake8 jedi; do
     if ! python -c "import $pkg" &>/dev/null; then
       python -m pip install $pkg
     fi
