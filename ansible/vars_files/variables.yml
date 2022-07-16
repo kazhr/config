@@ -1,7 +1,0 @@
----
-docker_hosts:
-  centos-a:
-    ip: "{{ ansible_host }}"
-
-  centos-b:
-    ip: "{{ ansible_host }}"

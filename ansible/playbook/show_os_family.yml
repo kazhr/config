@@ -1,9 +1,0 @@
----
-- name: debug
-  hosts: all
-  gather_facts: yes
-  become: yes
-  tasks:
-  - name: check os_family
-    ansible.builtin.debug:
-      var: ansible_os_family

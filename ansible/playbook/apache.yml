@@ -1,6 +1,0 @@
----
-- name: Apache
-  become: yes
-  hosts: all
-  roles:
-    - apache
