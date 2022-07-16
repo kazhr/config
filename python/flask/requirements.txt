@@ -1,7 +1,0 @@
-email_validator
-flask
-flask-limiter
-flask-login
-flask-sqlalchemy
-flask-wtf
-is_safe_url
